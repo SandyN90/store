@@ -1,14 +1,15 @@
 <template>
   <main>
-    <ul role="list" class="">
+
+    <!-- <ul role="list" class="">
       <li v-for="item in categoryItems" :key="item.category"
         class="col-span-1 flex flex-col text-center bg-white rounded-lg shadow divide-y divide-gray-200">
         <div>
-          <h1 class="text-xl">
-            {{ item.category }}
+          <h1 class="text-3xl my-8">
+            {{ item.category.charAt(0).toUpperCase() + item.category.slice(1) }}
           </h1>
         </div>
-        <div class="flex p-8">
+        <div class="flex lg:flex p-8">
           <li v-for="(val, index) in item.value" :key="index" class="mx-2 border border-black rounded-md w-full px-2">
             <div>
               <img class="w-32 h-32 flex-shrink-0 mx-auto rounded-full" :src="item.value[index].images[0]" alt="img" />
@@ -27,11 +28,12 @@
           </li>
         </div>
       </li>
-    </ul>
+    </ul> -->
   </main>
 </template>
 
 <script>
+import {getCategoryData} from '@/components/handlers/worker.js'
 export default {
   components: {
   },
@@ -40,11 +42,20 @@ export default {
       products: [],
       categories: [],
       categoryItems: [],
+      brands:[],
+      brandItems:[],
+      rating: [],
+      ratingItems:[],
+      discount: [],
+      discountItems: [],
+      price: [],
+      priceItems: [],
       counter: 0,
     };
   },
   created() {
     this.dataHandler();
+    getCategoryData();
   },
   methods: {
     async dataHandler() {
@@ -52,21 +63,59 @@ export default {
       const data = await (await fetch(url)).json();
       this.products = data.products;
       this.categories.push(this.products[0].category);
+      this.brands.push(this.products[0].brand);
+      this.rating.push(this.products[0].rating);
+      this.discount.push(this.products[0].discount);
+      this.price.push(this.products[0].price);
       this.products.forEach((e) => {
         if (this.categories[this.counter] !== e.category) {
           this.categories.push(e.category);
           this.counter += 1;
         }
+        if (this.brands[this.counter] !== e.brand) {
+          this.brands.push(e.brands);
+          this.counter += 1;
+        }
+        if (this.rating[this.counter] !== e.rating) {
+          this.rating.push(e.rating);
+          this.counter += 1;
+        }
+        if (this.discount[this.counter] !== e.discount) {
+          this.categories.push(e.category);
+          this.counter += 1;
+        }
+        if (this.price[this.counter] !== e.price) {
+          this.categories.push(e.category);
+          this.counter += 1;
+        }
       });
       this.categories.forEach((e) => {
-
-        const items = this.products.filter((val) => e === val.category)
-        let x = {
-          "category": e,
-          value: items
-        }
+        let items = this.products.filter((val) => e === val.category)
+        let x = { "category": e, value: items }
         this.categoryItems.push(x);
       });
+      this.brands.forEach((e) => {
+        const items = this.products.filter((val) => e === val.brand)
+        let x = { "brand": e, value: items }
+        this.brandItems.push(x);
+      });
+      this.rating.forEach((e) => {
+        const items = this.products.filter((val) => e === val.rating)
+        let x = { "brand": e, value: items }
+        this.ratingItems.push(x);
+      });
+      this.discount.forEach((e) => {
+        const items = this.products.filter((val) => e === val.discount)
+        let x = { "brand": e, value: items }
+        this.discountItems.push(x);
+      });
+      this.price.forEach((e) => {
+        const items = this.products.filter((val) => e === val.price)
+        let x = { "brand": e, value: items }
+        this.priceItems.push(x);
+      });
+
+      // console.log(this.categoryItems, this.brandItems, this.ratingItems, this.discountItems, this.priceItems);
     },
   }
 }
